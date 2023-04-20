@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
-    def index
+  skip_before_action :authorize, only: :index
+  def index
         render json: Task.all, status: :ok
       end
     

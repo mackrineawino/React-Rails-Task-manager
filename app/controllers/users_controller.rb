@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
     skip_before_action :authorize, only: :create
+    wrap_parameters format: []
+    rescue_from ActionController::UnpermittedParameters, with: :handle_errors
 
   def create
     user = User.create!(user_params)
@@ -13,7 +15,11 @@ class UsersController < ApplicationController
 
   private
 
+
   def user_params
-    params.permit(:id, :username, :password)
+    params.permit(:name, :email, :password)
   end
+  def handle_errors
+    render json: { "Unpermitted Parameters found": params.to_unsafe_h.except(:controller, :action, :id, :name, :email, :password).keys }, status: :unprocessable_entity
+end
 end
